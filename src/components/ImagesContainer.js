@@ -7,7 +7,9 @@ const useStyles = makeStyles(theme => ({
     height: "100vh",
     width: "50%",
     float: "left",
-    overflowY: "scroll"
+    overflowY: "scroll",
+    //background: "black",
+    
   },
   rightcontainer: {
     height: "100vh",
@@ -49,11 +51,7 @@ const ImagesContainer = props => {
       >
         {mockUpImageurl ? (
           <>
-            <img
-              src={mockUpImageurl}
-              className={classes.image}
-              alt="Loading..."
-            />
+            <SelectionBox src={mockUpImageurl} targetContainer="left"></SelectionBox>
           </>
         ) : (
           <div className={classes.demoimage}>
@@ -66,11 +64,11 @@ const ImagesContainer = props => {
       <div
         className={classes.rightcontainer}
         style={
-          !webImageurl ? { display: "flex", justifyContent: "center" } : null
+          !mockUpImageurl ? { display: "flex", justifyContent: "center" } : null
         }
       >
-        {webImageurl ? (
-          <img src={webImageurl} className={classes.image} alt="Loading..." />
+        {mockUpImageurl ? (
+           <SelectionBox src={mockUpImageurl} targetContainer="right"/>
         ) : (
           <div className={classes.demoimage}>
             <ImageIcon color="primary" className={classes.demoicon} />
