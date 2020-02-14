@@ -1,0 +1,135 @@
+html,
+body {
+  height: 100% !important;
+  position: relative;
+  /* 	background: #222; */
+}
+.pack {
+  height: 30px;
+  width: 75px;
+  background: rgb(127, 178, 255);
+  border: 0;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.select {
+  display: block;
+  position: absolute;
+  min-width: 100px;
+  min-height: 100px;
+  transition: 5s;
+  border-radius: 5px;
+}
+.widget {
+  display: block;
+  position: absolute;
+  min-width: 100px;
+  min-height: 100px;
+  /* transition causes issues with drag stop, you can "toss" the draggable over another draggable, interrupting collision detection. */
+  /* 	transition: 0.15s; */
+  border-radius: 5px;
+}
+.widget-inner {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  transition: 0.1s;
+  border-radius: 5px;
+  cursor: move;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  transition: 0.15s;
+}
+.widget-helper {
+  position: absolute;
+  display: none;
+  background: green;
+  transform: translate(-50%, -50%);
+  z-index: 1049;
+}
+
+.ui-resizable-se {
+  height: 20px;
+  width: 20px;
+  cursor: se-resize;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+}
+.resize-widget {
+  display: none;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.resize-widget::after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f054";
+  font-weight: 800;
+  display: inline-block;
+  z-index: 1;
+  position: absolute;
+  top: 8px;
+  right: 5px;
+  font-size: 15px;
+  color: #eee;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.remove-widget {
+  display: none;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+}
+.remove-widget::after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f00d";
+  font-weight: 800;
+  display: inline-block;
+  z-index: 1;
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 15px;
+  color: #eee;
+  pointer-events: none;
+}
+
+.rotate {
+  position: absolute;
+  color: #eee;
+  top: 50%;
+  right: 0px;
+  transform: translate(0, -50%);
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1;
+  border-radius: 50%;
+}
+
+.handle {
+  position: absolute;
+  border-radius: 5px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.collision {
+  background: rgba(255, 117, 117, 0.8) !important;
+}

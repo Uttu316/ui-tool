@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Mobile",
+    "width": 768
+  },
+  {
+    "label": "Tablet",
+    "width": 992
+  },
+  {
+    "label": "Desktop",
+    "width": 1200
+  }
+]
