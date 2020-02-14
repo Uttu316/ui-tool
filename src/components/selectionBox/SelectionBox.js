@@ -5,6 +5,8 @@ import {
   DrawLayer,
   wrapShape
 } from "react-shape-editor";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import ResizeHandleComponent from "./ResizeHandleComponent";
 const constrainMove = ({ x, y, width, height, vectorHeight, vectorWidth }) => {
   return {
@@ -32,15 +34,44 @@ function arrayReplace(arr, index, item) {
   ];
 }
 
-const RectShape = wrapShape(({ width, height }) => (
-  <rect width={width} height={height} fill="rgba(0,0,255,0.5)" />
-));
-
 let idIterator = 1;
-
+const initialState = {
+  mouseX: null,
+  mouseY: null
+};
 const SelectionBox = props => {
   const [vectorHeight, setVectorHeight] = React.useState(0);
   const [vectorWidth, setVectorWidth] = React.useState(0);
+  const [state, setState] = React.useState(initialState);
+  let indextoDel;
+  const handleClick = event => {
+    event.preventDefault();
+    setState({
+      mouseX: event.clientX - 2,
+      mouseY: event.clientY - 4
+    });
+  };
+  const handleClose = () => {
+    setState(initialState);
+  };
+  const handleDelete = () => {
+    const index = props.itemsLeft.findIndex(x => x.id === indextoDel);
+    console.log(index - 1, props.itemsLeft);
+    const newLeftArray = arrayReplace(props.itemsLeft, index - 1, []);
+    props.setItemsLeft(newLeftArray);
+    const newRightArray = arrayReplace(props.itemsRight, index - 1, []);
+    props.setItemsRight(newRightArray);
+    setState(initialState);
+  };
+  const RectShape = wrapShape(({ width, height }) => (
+    <rect
+      onContextMenu={handleClick}
+      style={{ cursor: "context-menu" }}
+      width={width}
+      height={height}
+      fill="rgba(0,0,255,0.5)"
+    />
+  ));
   return (
     <ShapeEditor vectorWidth={vectorWidth} vectorHeight={vectorHeight}>
       <ImageLayer
@@ -86,12 +117,18 @@ const SelectionBox = props => {
               constrainResize={constrainResize}
               constrainMove={constrainMove}
               ResizeHandleComponent={ResizeHandleComponent}
+              onFocus={(e, rect) => {
+                indextoDel = rect.shapeId;
+                console.log(rect.shapeId);
+              }}
               onChange={newRect => {
                 console.log(newRect, "newRect");
+
                 const isAreaChanged = newRect.height !== height;
                 const targetRectIndex = props.itemsRight.findIndex(
                   x => x.id === id
                 );
+
                 const rightTargetY = props.itemsRight[targetRectIndex].y;
                 if (isAreaChanged) {
                   const newLArray = arrayReplace(props.itemsLeft, index, {
@@ -190,6 +227,19 @@ const SelectionBox = props => {
             />
           );
         })}
+      <Menu
+        keepMounted
+        open={state.mouseY !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          state.mouseY !== null && state.mouseX !== null
+            ? { top: state.mouseY, left: state.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={() => handleDelete()}>Delete</MenuItem>
+      </Menu>
     </ShapeEditor>
   );
 };
