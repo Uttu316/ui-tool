@@ -15,6 +15,7 @@
     "react-autocomplete": "^1.8.1",
     "react-dom": "^16.12.0",
     "react-resizable-rotatable-draggable": "^0.2.0",
+    "react-resize-detector": "^4.2.1",
     "react-scripts": "3.3.1",
     "react-shape-editor": "^3.5.3",
     "styled-components": "^5.0.1"

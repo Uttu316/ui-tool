@@ -152,6 +152,7 @@ const ImagesContainer = props => {
                 itemsRight={itemsRight}
                 setItemsLeft={setItemsLeft}
                 setItemsRight={setItemsRight}
+                deviceWidth={props.deviceWidth}
               />
             </>
           ) : (
@@ -216,6 +217,7 @@ const ImagesContainer = props => {
                 setItemsLeft={setItemsLeft}
                 setItemsRight={setItemsRight}
                 targetContainer="right"
+                deviceWidth={props.deviceWidth}
               />
             </>
           ) : (
@@ -229,4 +231,4 @@ const ImagesContainer = props => {
     </>
   );
 };
-export default ImagesContainer;
+export default React.memo(ImagesContainer);
