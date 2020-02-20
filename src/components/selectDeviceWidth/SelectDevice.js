@@ -27,12 +27,20 @@ const useStyles = makeStyles(theme => ({
 
 function SelectDevice(props) {
   const classes = useStyles();
-  const [value, setValue] = React.useState("");
-  //console.log(value);
-  //Todo: use or remove deviceType prop
+
+  const [value, setValue] = React.useState();
+
+  React.useEffect(() => {
+    if (Number(value) >= 320) {
+      props.setDeviceType(Number(value));
+    }
+    if (Number(value) === 0) {
+      props.setDeviceType(Number(value));
+    }
+  }, [value]);
   return (
     <Autocomplete
-      getItemValue={item => item.label + " " + item.width + " px"}
+      getItemValue={item => `${item.width}`}
       items={DeviceWidth}
       wrapperStyle={{
         display: "inline-block",
@@ -44,7 +52,7 @@ function SelectDevice(props) {
           <>
             <input
               {...props}
-              placeholder="Select Device type"
+              placeholder="Select Device width"
               className={classes.input}
             ></input>
             <ExpandMoreIcon className={classes.icon} />

@@ -41,12 +41,21 @@ const initialState = {
   mouseY: null
 };
 
+class Rect {
+  constructor(id, x, y, width, height) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+}
+
 const SelectionBox = props => {
   const [vectorHeight, setVectorHeight] = React.useState(0);
   const [vectorWidth, setVectorWidth] = React.useState(0);
-  const [containerWidth, setContainerWidth] = React.useState(320);
   const [state, setState] = React.useState(initialState);
-  let idtoDel;
+  const [idtoDel, setIdtoDel] = React.useState(null);
 
   const handleClick = event => {
     event.preventDefault();
@@ -60,20 +69,20 @@ const SelectionBox = props => {
     setState(initialState);
   };
 
-  const handleDelete = index => {
-    //const index = props.itemsLeft.findIndex(x => x.id === idtoDel);
-    //console.log(index, props.itemsLeft);
-    console.log("i am deleted", index);
+  const handleDelete = () => {
+    const index = props.itemsLeft.findIndex(x => x.id === idtoDel);
     const newLeftArray = arrayReplace(props.itemsLeft, index, []);
     props.setItemsLeft(newLeftArray);
     const newRightArray = arrayReplace(props.itemsRight, index, []);
     props.setItemsRight(newRightArray);
     setState(initialState);
   };
-  console.log(props.itemsLeft);
 
-  const RectShape = wrapShape(({ width, height }) => (
+  const RectShape = wrapShape(({ width, height, shapeId }) => (
     <rect
+      onClick={() => {
+        setIdtoDel(shapeId);
+      }}
       onContextMenu={handleClick}
       style={{ cursor: "context-menu" }}
       width={width}
@@ -84,10 +93,10 @@ const SelectionBox = props => {
 
   return (
     <>
-      {containerWidth === 0 ? (
+      {props.deviceWidth === 0 ? (
         <ReactResizeDetector
           handleWidth
-          onResize={width => setContainerWidth(width)}
+          onResize={width => props.setDeviceType(width)}
           refreshMode="throttle"
           refreshRate={500}
         />
@@ -95,8 +104,8 @@ const SelectionBox = props => {
       <ShapeEditor
         vectorWidth={vectorWidth}
         vectorHeight={vectorHeight}
-        style={{ width: containerWidth !== 0 ? containerWidth : "100%" }}
-        scale={(containerWidth || 1) / (vectorWidth || 1)}
+        style={{ width: props.deviceWidth !== 0 ? props.deviceWidth : "100%" }}
+        scale={(props.deviceWidth || 1) / (vectorWidth || 1)}
       >
         <ImageLayer
           src={props.src}
@@ -106,9 +115,6 @@ const SelectionBox = props => {
           }}
         />
 
-        {/*props.targetContainer === "right" && (
-        <iframe src={"https://www.w3schools.com"} height="200" width="300" />
-      )*/}
         <DrawLayer
           constrainResize={constrainResize}
           constrainMove={constrainMove}
@@ -117,16 +123,16 @@ const SelectionBox = props => {
 
             props.setItemsLeft([
               ...props.itemsLeft,
-              { id: `id${idIterator}`, x, y, width, height }
+
+              new Rect(`id${idIterator}`, x, y, width, height)
             ]);
             props.setItemsRight([
               ...props.itemsRight,
-              { id: `id${idIterator}`, x, y, width, height }
+              new Rect(`id${idIterator}`, x, y, width, height)
             ]);
             idIterator += 1;
           }}
         />
-
         {props.targetContainer === "left" &&
           props.itemsLeft.map((item, index) => {
             const { id, height, x, y } = item;
@@ -142,8 +148,6 @@ const SelectionBox = props => {
                 constrainMove={constrainMove}
                 ResizeHandleComponent={ResizeHandleComponent}
                 onChange={newRect => {
-                  console.log(newRect, "newRect");
-
                   const isAreaChanged = newRect.height !== height;
                   const targetRectIndex = props.itemsRight.findIndex(
                     x => x.id === id
@@ -155,7 +159,6 @@ const SelectionBox = props => {
                       ...item,
                       ...newRect
                     });
-                    console.log(newLArray, "scalednewLarray");
 
                     props.setItemsLeft(newLArray);
                     if (rightTargetY !== y) {
@@ -163,13 +166,24 @@ const SelectionBox = props => {
                         ...item,
                         ...newRect
                       });
-                      if (y !== newRect.y) {
+                      if (y > newRect.y) {
                         newRArray[targetRectIndex].y =
                           rightTargetY - Math.abs(newRect.y - y);
-                      } else {
-                        newRArray[targetRectIndex].y = rightTargetY;
+                        //console.log(newRArray, "Increasedafterdragged");
                       }
-                      console.log(newRArray, "onlyscalednewRarray");
+                      if (y < newRect.y) {
+                        newRArray[targetRectIndex].y =
+                          rightTargetY + Math.abs(newRect.y - y);
+                        //console.log(newRArray, "decreasedafterdragged");
+                      }
+                      if (y === newRect.y && height !== newRect.height) {
+                        newRArray[targetRectIndex].y = rightTargetY;
+                        //console.log(newRArray, "idontknowwy?");
+                      }
+                      //console.log(newRArray, "onlyscalednewRarray");
+                      if (newRArray[targetRectIndex].y <= 0) {
+                        newRArray[targetRectIndex].y = 0;
+                      }
                       props.setItemsRight(newRArray);
                     } else {
                       props.setItemsLeft(newLArray);
@@ -178,7 +192,10 @@ const SelectionBox = props => {
                         ...item,
                         ...newRect
                       });
-                      console.log(newRArray, "scalednewRarray");
+                      //console.log(newRArray, "scalednewRarray");
+                      if (newRArray[targetRectIndex].y <= 0) {
+                        newRArray[targetRectIndex].y = 0;
+                      }
                       props.setItemsRight(newRArray);
                     }
                   } else if (newRect.y !== y) {
@@ -186,7 +203,7 @@ const SelectionBox = props => {
                       ...item,
                       ...newRect
                     });
-                    console.log(newLArray, "DraggednewLarray");
+                    //console.log(newLArray, "DraggednewLarray");
 
                     props.setItemsLeft(newLArray);
                   }
@@ -210,14 +227,14 @@ const SelectionBox = props => {
                 constrainMove={constrainMove}
                 ResizeHandleComponent={ResizeHandleComponent}
                 onChange={newRect => {
-                  console.log(newRect, "newRect");
+                  //console.log(newRect, "newRect");
                   const isAreaChanged = newRect.height !== height;
                   if (newRect.y !== y && !isAreaChanged) {
                     const newRArray = arrayReplace(props.itemsRight, index, {
                       ...item,
                       ...newRect
                     });
-                    console.log(newRArray, "DraggednewRarray");
+                    //console.log(newRArray, "DraggednewRarray");
                     props.setItemsRight(newRArray);
                   }
                 }}
@@ -226,7 +243,7 @@ const SelectionBox = props => {
           })}
         <Menu
           keepMounted
-          open={state.mouseY !== null}
+          open={state.mouseY !== null && props.targetContainer === "left"}
           onClose={handleClose}
           anchorReference="anchorPosition"
           anchorPosition={

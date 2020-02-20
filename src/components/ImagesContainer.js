@@ -11,7 +11,6 @@ const useStyles = makeStyles(theme => ({
     width: "50%",
     float: "left",
     height: "90vh"
-    //background: "black",
   },
   rightcontainer: {
     height: "90vh",
@@ -90,21 +89,15 @@ const useStyles = makeStyles(theme => ({
 const ImagesContainer = props => {
   const classes = useStyles();
   const [url, getURL] = React.useState("");
-  const [itemsLeft, setItemsLeft] = React.useState([
-    //{ id: '1', x: 0, y: 10, width: 50, height: 25 },
-    //{ id: '2', x: 120, y: 0, width: 20, height: 75 }
-  ]);
-  const [itemsRight, setItemsRight] = React.useState([]);
-
   let mockUpImageurl = props.prev ? URL.createObjectURL(props.prev) : null;
-  let webImageurl =
-    props.ImageUrl !== "" ? props.ImageUrl.data.screenshot_path : "";
+  //Todo: use props.ImageUrl to render website for
+  // props.ImageUrl
+
   function handleSubmit(e) {
     e.preventDefault();
     props.fetchURL(url);
   }
-  //console.log(itemsLeft, "left");
-  // console.log(itemsRight, "right");
+
   return (
     <>
       <div className={classes.leftcontainer}>
@@ -148,11 +141,12 @@ const ImagesContainer = props => {
               <SelectionBox
                 src={mockUpImageurl}
                 targetContainer="left"
-                itemsLeft={itemsLeft}
-                itemsRight={itemsRight}
-                setItemsLeft={setItemsLeft}
-                setItemsRight={setItemsRight}
+                itemsLeft={props.itemsLeft}
+                itemsRight={props.itemsRight}
+                setItemsLeft={props.setItemsLeft}
+                setItemsRight={props.setItemsRight}
                 deviceWidth={props.deviceWidth}
+                setDeviceType={props.setDeviceType}
               />
             </>
           ) : (
@@ -212,12 +206,13 @@ const ImagesContainer = props => {
             <>
               <SelectionBox
                 src={mockUpImageurl}
-                itemsLeft={itemsLeft}
-                itemsRight={itemsRight}
-                setItemsLeft={setItemsLeft}
-                setItemsRight={setItemsRight}
+                itemsLeft={props.itemsLeft}
+                itemsRight={props.itemsRight}
+                setItemsLeft={props.setItemsLeft}
+                setItemsRight={props.setItemsRight}
                 targetContainer="right"
                 deviceWidth={props.deviceWidth}
+                setDeviceType={props.setDeviceType}
               />
             </>
           ) : (
